@@ -740,11 +740,16 @@
 
     // Submit
     async function submitSignup() {
-      const email = document.getElementById("finalEmail").value.trim();
+      const emailInput = document.getElementById("finalEmail");
+      const email = emailInput.value.trim();
       const checks = document.querySelectorAll('#serviceList input:checked');
+      const btn = document.querySelector('.picker-actions .btn');
+
+      emailInput.style.borderColor = "";
+
       if (!email || !/.+@.+\..+/.test(email)) {
-        document.getElementById("finalEmail").focus();
-        document.getElementById("finalEmail").style.borderColor = "var(--alert)";
+        emailInput.focus();
+        emailInput.style.borderColor = "var(--alert)";
         return;
       }
       if (checks.length === 0) {
@@ -754,21 +759,38 @@
 
       const selected = Array.from(checks).map(c => c.dataset.id);
 
-      // ─────────────────────────────────────────────────────────
-      // TODO (backend): POST { email, selected } naar /api/signup
-      // Voor MVP op Vercel: koppel Formspree, Resend of eigen API.
-      // Voorbeeld:
-      // await fetch("/api/signup", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ email, selected })
-      // });
-      // ─────────────────────────────────────────────────────────
+      const originalText = btn.textContent;
+      btn.textContent = "Bezig met aanmelden…";
+      btn.disabled = true;
 
-      document.getElementById("successDetail").textContent =
-        `We monitoren ${selected.length} diensten voor ${email}. Eerste alert: donderdag.`;
-      document.getElementById("success").classList.add("show");
-      document.getElementById("success").scrollIntoView({ behavior:"smooth", block:"center" });
+      try {
+        const r = await fetch("/api/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, selected })
+        });
+
+        const data = await r.json().catch(() => ({}));
+
+        if (!r.ok) {
+          alert(data.error || "Er ging iets mis. Probeer het opnieuw.");
+          btn.textContent = originalText;
+          btn.disabled = false;
+          return;
+        }
+
+        document.getElementById("successDetail").textContent =
+          data.returning
+            ? `Bijgewerkt: we monitoren nu ${data.count} diensten voor ${email}. Check je inbox voor bevestiging.`
+            : `We monitoren ${data.count} diensten voor ${email}. Eerste alert: donderdag. Check je inbox voor bevestiging.`;
+        document.getElementById("success").classList.add("show");
+        document.getElementById("success").scrollIntoView({ behavior:"smooth", block:"center" });
+        btn.textContent = "✓ Ingeschreven";
+      } catch (err) {
+        alert("Netwerkfout. Check je verbinding en probeer opnieuw.");
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
     }
   </script>
 

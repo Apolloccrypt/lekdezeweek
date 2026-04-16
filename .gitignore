@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# env / secrets — NEVER commit
+.env
+.env.local
+.env*.local
+.env.development
+.env.production
+
+# vercel
+.vercel
+
+# OS
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
+npm-debug.log*

@@ -1,0 +1,14 @@
+{
+  "name": "lekdezeweek",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Wekelijkse datalek-radar voor Nederland. Onderdeel van Check Don't Store.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.34.3",
+    "resend": "^4.0.1"
+  }
+}
