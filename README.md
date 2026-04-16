@@ -141,6 +141,7 @@ npx vercel link           # koppel met je Vercel project
 npx vercel env pull .env.local   # download env vars lokaal
 npx vercel dev            # start lokale server op localhost:3000
 ```
+#dont snoop
 
 ## Security notes
 
