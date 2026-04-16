@@ -26,6 +26,7 @@
 import { Redis } from "@upstash/redis";
 import { Resend } from "resend";
 import { BREACHES, SERVICE_NAMES } from "../../data/breaches.js";
+import { fetchRecentHibpBreaches } from "../../lib/hibp.js";
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
@@ -48,18 +49,31 @@ export default async function handler(req, res) {
   const testEmail = req.query?.email?.toLowerCase();
 
   try {
-    // ── 3. Filter lekken van afgelopen 7 dagen ─────────────────
+    // ── 3. Verzamel lekken: HIBP automatisch + handmatige NL-curatie ──
     const now = Date.now();
-    const recentBreaches = BREACHES.filter((b) => {
+
+    // 3a. Handmatige lekken (NL-specifiek) — laatste 7 dagen
+    const manualBreaches = BREACHES.filter((b) => {
       const breachTime = new Date(b.date).getTime();
       return !isNaN(breachTime) && now - breachTime <= SEVEN_DAYS_MS;
     });
+
+    // 3b. HIBP globale feed (automatisch, filter zit al in fetcher)
+    const hibpBreaches = await fetchRecentHibpBreaches();
+
+    // 3c. Combineer + dedupe (handmatig wint bij overlap, want jij
+    //     hebt waarschijnlijk meer detail / betere actie-advies)
+    const byKey = new Map();
+    for (const b of hibpBreaches) byKey.set(`${b.service}|${b.date}`, b);
+    for (const b of manualBreaches) byKey.set(`${b.service}|${b.date}`, b);
+    const recentBreaches = Array.from(byKey.values());
 
     if (recentBreaches.length === 0 && !isTest) {
       // Geen lekken deze week → geen mails sturen (geen spam)
       return res.status(200).json({
         ok: true,
         sent: 0,
+        sources: { manual: manualBreaches.length, hibp: hibpBreaches.length },
         message: "No recent breaches this week — no digest sent.",
       });
     }
@@ -131,6 +145,7 @@ export default async function handler(req, res) {
       ok: true,
       test: isTest,
       breachesThisWeek: recentBreaches.length,
+      sources: { manual: manualBreaches.length, hibp: hibpBreaches.length },
       usersProcessed: userKeys.length,
       ...results,
     });
