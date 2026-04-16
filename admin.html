@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Admin · LekDezeWeek</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --bg-alt: #ece7dc;
+      --ink: #1a1814;
+      --ink-soft: #4a453c;
+      --muted: #8b8578;
+      --line: #d9d3c4;
+      --alert: #c8321e;
+      --ok: #2d6a4f;
+      --warn: #b07a00;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .wrap {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px 20px 80px;
+    }
+
+    /* Header */
+    header {
+      padding: 24px 0 32px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 32px;
+    }
+    .logo {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .logo-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--alert);
+    }
+    .subtitle {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+
+    h1 {
+      font-family: "Fraunces", serif;
+      font-size: 32px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .intro {
+      color: var(--ink-soft);
+      font-size: 15px;
+      margin-bottom: 32px;
+    }
+
+    /* Form */
+    .field {
+      margin-bottom: 28px;
+    }
+    label.field-label {
+      display: block;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-soft);
+      margin-bottom: 10px;
+    }
+    label.field-label .req { color: var(--alert); }
+    label.field-label .opt { color: var(--muted); text-transform: none; letter-spacing: 0; font-size: 12px; }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="email"],
+    input[type="password"],
+    input[type="date"],
+    textarea,
+    select {
+      width: 100%;
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 14px 14px;
+      outline: none;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--ink);
+    }
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    select {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%231a1814' d='M6 8L0 0h12z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+    }
+    input::placeholder, textarea::placeholder {
+      color: var(--muted);
+    }
+
+    /* Risk radio cards */
+    .risk-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .risk-card {
+      cursor: pointer;
+      padding: 14px 8px;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.12s;
+      user-select: none;
+    }
+    .risk-card input { display: none; }
+    .risk-card.low  { color: var(--ok); }
+    .risk-card.medium { color: var(--warn); }
+    .risk-card.high { color: var(--alert); }
+    .risk-card:has(input:checked) {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+    }
+
+    /* Toggle */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+    }
+    .toggle-row-label {
+      font-size: 15px;
+      color: var(--ink);
+    }
+    .toggle-row-label small {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+    .toggle {
+      position: relative;
+      width: 52px;
+      height: 30px;
+      background: var(--line);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .toggle input { display: none; }
+    .toggle-knob {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 24px; height: 24px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .toggle:has(input:checked) { background: var(--ok); }
+    .toggle:has(input:checked) .toggle-knob { transform: translateX(22px); }
+
+    /* Checkbox grid */
+    .check-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+    }
+    @media (max-width: 480px) {
+      .check-grid { grid-template-columns: 1fr; }
+    }
+    .check-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background 0.12s;
+      user-select: none;
+    }
+    .check-cell:hover { background: var(--bg-alt); }
+    .check-cell input { display: none; }
+    .check-cell .box {
+      width: 20px; height: 20px;
+      border: 1.5px solid var(--ink);
+      border-radius: 2px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .check-cell input:checked + .box {
+      background: var(--ink);
+    }
+    .check-cell input:checked + .box::after {
+      content: "✓";
+      color: var(--bg);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .check-cell .txt { font-size: 14px; }
+
+    .other-wrap {
+      margin-top: 10px;
+      padding: 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+    }
+    .other-wrap .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-family: "JetBrains Mono", monospace;
+    }
+    .other-wrap input {
+      border: none;
+      padding: 4px 0;
+      font-size: 14px;
+      background: transparent;
+    }
+
+    /* Preview box */
+    .preview-toggle {
+      cursor: pointer;
+      padding: 12px 14px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      width: 100%;
+      text-align: left;
+      border-radius: 2px;
+    }
+    .preview-toggle::before {
+      content: "▸ ";
+      display: inline-block;
+      transition: transform 0.2s;
+    }
+    .preview-toggle.open::before { content: "▾ "; }
+    pre.preview-json {
+      background: #1a1814;
+      color: #e8e5dc;
+      padding: 16px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      overflow-x: auto;
+      white-space: pre;
+      border-radius: 0 0 2px 2px;
+      margin-bottom: 28px;
+      display: none;
+    }
+    pre.preview-json.open { display: block; }
+
+    /* Action button */
+    .actions {
+      position: sticky;
+      bottom: 0;
+      background: linear-gradient(to bottom, transparent, var(--bg) 20%, var(--bg));
+      padding: 24px 0 16px;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    button.submit {
+      width: 100%;
+      padding: 18px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      border-radius: 2px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.005em;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button.submit:hover { background: var(--alert); }
+    button.submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    button.submit.loading::after {
+      content: "…";
+    }
+
+    /* Status / result */
+    .status {
+      padding: 16px;
+      border-radius: 2px;
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+      display: none;
+    }
+    .status.show { display: block; }
+    .status.success { background: var(--bg-alt); border-left: 3px solid var(--ok); }
+    .status.error { background: #fff0ec; border-left: 3px solid var(--alert); }
+    .status a {
+      color: var(--ink);
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 8px;
+      padding: 10px 16px;
+      background: #fff;
+      border: 1px solid var(--ink);
+      text-decoration: none;
+    }
+
+    /* Helpers */
+    .hint-below {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .clear-btn {
+      background: none;
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+      padding: 12px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      border-radius: 2px;
+    }
+    .clear-btn:hover { border-color: var(--alert); color: var(--alert); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo"><span class="logo-dot"></span>LekDezeWeek · Admin</div>
+      <div class="subtitle">Voeg een breach toe</div>
+    </header>
+
+    <h1>Nieuw lek</h1>
+    <p class="intro">Vul de velden in. Bij submit wordt een Pull Request op GitHub gemaakt die je daarna met één klik kunt mergen. Je concept wordt lokaal opgeslagen als je tussendoor afbreekt.</p>
+
+    <form id="form" onsubmit="return false;">
+
+      <!-- Admin password -->
+      <div class="field">
+        <label class="field-label">Admin wachtwoord <span class="req">*</span></label>
+        <input type="password" id="password" autocomplete="current-password" required />
+        <div class="hint-below">Dit is jouw ADMIN_PASSWORD uit Vercel env vars.</div>
+      </div>
+
+      <!-- Service -->
+      <div class="field">
+        <label class="field-label" for="service">Dienst <span class="req">*</span></label>
+        <select id="service" required>
+          <option value="">— Kies een dienst —</option>
+        </select>
+      </div>
+
+      <!-- Date -->
+      <div class="field">
+        <label class="field-label" for="date">Datum van het lek <span class="req">*</span></label>
+        <input type="date" id="date" required />
+      </div>
+
+      <!-- Data leaked -->
+      <div class="field">
+        <label class="field-label">Welke data is gelekt? <span class="req">*</span></label>
+        <div class="check-grid" id="dataChecks"></div>
+        <div class="other-wrap">
+          <div class="hint">Andere data (komma-gescheiden)</div>
+          <input type="text" id="dataOther" placeholder="bv. klantnummers, reserveringen" />
+        </div>
+      </div>
+
+      <!-- Risk -->
+      <div class="field">
+        <label class="field-label">Risico <span class="req">*</span></label>
+        <div class="risk-group">
+          <label class="risk-card low">
+            <input type="radio" name="risk" value="low" />
+            Laag
+          </label>
+          <label class="risk-card medium">
+            <input type="radio" name="risk" value="medium" checked />
+            Middel
+          </label>
+          <label class="risk-card high">
+            <input type="radio" name="risk" value="high" />
+            Hoog
+          </label>
+        </div>
+      </div>
+
+      <!-- Confirmed toggle -->
+      <div class="field">
+        <label class="field-label">Bevestigd</label>
+        <div class="toggle-row">
+          <div class="toggle-row-label">
+            Is dit lek officieel bevestigd?
+            <small>Door bedrijf, AP of betrouwbare bron</small>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="confirmed" checked />
+            <span class="toggle-knob"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Action advice -->
+      <div class="field">
+        <label class="field-label" for="action">Wat moet de gebruiker nu doen? <span class="req">*</span></label>
+        <textarea id="action" required placeholder="Verander je wachtwoord · Zet 2FA aan · Claim via art. 82 AVG"></textarea>
+        <div class="hint-below">Korte zin, scheidingsteken: <code>·</code></div>
+      </div>
+
+      <!-- Source -->
+      <div class="field">
+        <label class="field-label" for="source">Bron <span class="req">*</span></label>
+        <select id="source" required>
+          <option value="Security.nl">Security.nl</option>
+          <option value="Tweakers">Tweakers</option>
+          <option value="NOS">NOS</option>
+          <option value="Z-CERT">Z-CERT</option>
+          <option value="AP">Autoriteit Persoonsgegevens</option>
+          <option value="Have I Been Pwned">Have I Been Pwned</option>
+          <option value="Officieel persbericht">Officieel persbericht</option>
+          <option value="NCSC">NCSC</option>
+          <option value="Anders">Anders…</option>
+        </select>
+      </div>
+
+      <!-- Source URL -->
+      <div class="field">
+        <label class="field-label" for="sourceUrl">Bron-URL <span class="opt">(optioneel)</span></label>
+        <input type="url" id="sourceUrl" placeholder="https://www.security.nl/posting/..." />
+      </div>
+
+      <!-- JSON preview -->
+      <div class="field">
+        <button type="button" class="preview-toggle" onclick="togglePreview()">Preview JSON</button>
+        <pre class="preview-json" id="preview"></pre>
+      </div>
+
+      <!-- Submit -->
+      <div class="actions">
+        <button type="submit" class="submit" id="submitBtn" onclick="submit()">
+          Maak Pull Request op GitHub →
+        </button>
+        <button type="button" class="clear-btn" onclick="clearDraft()">Leegmaken</button>
+      </div>
+
+      <div class="status" id="status"></div>
+    </form>
+  </div>
+
+  <script>
+    // ─── Services list (matches index.html) ────────────────────────
+    const SERVICES = [
+      { id:"basicfit", naam:"Basic-Fit", categorie:"Fitness" },
+      { id:"fit20", naam:"Fit20", categorie:"Fitness" },
+      { id:"booking", naam:"Booking.com", categorie:"Reizen" },
+      { id:"airbnb", naam:"Airbnb", categorie:"Reizen" },
+      { id:"klm", naam:"KLM / Air France", categorie:"Reizen" },
+      { id:"tui", naam:"TUI", categorie:"Reizen" },
+      { id:"ns", naam:"NS (trein)", categorie:"Reizen" },
+      { id:"uber", naam:"Uber", categorie:"Reizen" },
+      { id:"chipsoft", naam:"ChipSoft (ziekenhuis/huisarts)", categorie:"Zorg" },
+      { id:"epd", naam:"Ander EPD (Epic/Cerner)", categorie:"Zorg" },
+      { id:"ing", naam:"ING Bank", categorie:"Bank" },
+      { id:"rabobank", naam:"Rabobank", categorie:"Bank" },
+      { id:"abnamro", naam:"ABN AMRO", categorie:"Bank" },
+      { id:"sns", naam:"SNS Bank", categorie:"Bank" },
+      { id:"bunq", naam:"bunq", categorie:"Bank" },
+      { id:"bol", naam:"Bol.com", categorie:"Webshop" },
+      { id:"coolblue", naam:"Coolblue", categorie:"Webshop" },
+      { id:"zalando", naam:"Zalando", categorie:"Webshop" },
+      { id:"amazon", naam:"Amazon", categorie:"Webshop" },
+      { id:"ah", naam:"Albert Heijn / Mijn AH", categorie:"Webshop" },
+      { id:"jumbo", naam:"Jumbo", categorie:"Webshop" },
+      { id:"netflix", naam:"Netflix", categorie:"Streaming" },
+      { id:"spotify", naam:"Spotify", categorie:"Streaming" },
+      { id:"disney", naam:"Disney+", categorie:"Streaming" },
+      { id:"pathe", naam:"Pathé", categorie:"Streaming" },
+      { id:"kpn", naam:"KPN", categorie:"Telecom" },
+      { id:"vodafone", naam:"Vodafone", categorie:"Telecom" },
+      { id:"tmobile", naam:"T-Mobile", categorie:"Telecom" },
+      { id:"ziggo", naam:"Ziggo", categorie:"Telecom" },
+      { id:"eneco", naam:"Eneco", categorie:"Energie" },
+      { id:"essent", naam:"Essent", categorie:"Energie" },
+      { id:"deliveroo", naam:"Deliveroo", categorie:"Maaltijd" },
+      { id:"thuisbezorgd", naam:"Thuisbezorgd.nl", categorie:"Maaltijd" },
+      { id:"linkedin", naam:"LinkedIn", categorie:"Social" },
+      { id:"facebook", naam:"Facebook / Meta", categorie:"Social" },
+      { id:"instagram", naam:"Instagram", categorie:"Social" },
+      { id:"apple", naam:"Apple ID / iCloud", categorie:"Tech" },
+      { id:"google", naam:"Google Account", categorie:"Tech" },
+      { id:"microsoft", naam:"Microsoft Account", categorie:"Tech" },
+      { id:"ikea", naam:"IKEA", categorie:"Wonen" },
+    ];
+
+    // ─── Common "data leaked" options ──────────────────────────────
+    const DATA_OPTIONS = [
+      "naam",
+      "e-mailadres",
+      "telefoonnummer",
+      "adres",
+      "geboortedatum",
+      "IBAN",
+      "bankrekening",
+      "wachtwoord (gehasht)",
+      "wachtwoord (plaintext)",
+      "creditcardgegevens",
+      "BSN",
+      "kopie ID-bewijs",
+      "medisch dossier",
+      "foto's",
+      "gebruikersnaam",
+      "IP-adres",
+    ];
+
+    // ─── Render service dropdown grouped by category ───────────────
+    (function renderServices() {
+      const select = document.getElementById("service");
+      const grouped = {};
+      for (const s of SERVICES) {
+        (grouped[s.categorie] = grouped[s.categorie] || []).push(s);
+      }
+      for (const cat of Object.keys(grouped)) {
+        const og = document.createElement("optgroup");
+        og.label = cat;
+        for (const s of grouped[cat]) {
+          const o = document.createElement("option");
+          o.value = s.id;
+          o.textContent = s.naam;
+          o.dataset.naam = s.naam;
+          og.appendChild(o);
+        }
+        select.appendChild(og);
+      }
+    })();
+
+    // ─── Render data-leaked checkboxes ─────────────────────────────
+    (function renderDataChecks() {
+      const grid = document.getElementById("dataChecks");
+      for (const opt of DATA_OPTIONS) {
+        const label = document.createElement("label");
+        label.className = "check-cell";
+        label.innerHTML = `
+          <input type="checkbox" value="${opt}" />
+          <span class="box"></span>
+          <span class="txt">${opt}</span>
+        `;
+        grid.appendChild(label);
+      }
+    })();
+
+    // ─── Default date: today ───────────────────────────────────────
+    document.getElementById("date").valueAsDate = new Date();
+
+    // ─── Build breach object from form ─────────────────────────────
+    function buildBreach() {
+      const serviceSelect = document.getElementById("service");
+      const serviceId = serviceSelect.value;
+      const serviceName = serviceSelect.selectedOptions[0]?.dataset.naam || serviceId;
+      const date = document.getElementById("date").value;
+
+      const dataChecked = [...document.querySelectorAll("#dataChecks input:checked")].map((el) => el.value);
+      const dataOther = document.getElementById("dataOther").value.trim();
+      const dataExtra = dataOther ? dataOther.split(",").map((s) => s.trim()).filter(Boolean) : [];
+      const dataLeaked = [...dataChecked, ...dataExtra];
+
+      const risk = document.querySelector('input[name="risk"]:checked')?.value || "medium";
+      const confirmed = document.getElementById("confirmed").checked;
+      const action = document.getElementById("action").value.trim();
+      const source = document.getElementById("source").value;
+      const sourceUrl = document.getElementById("sourceUrl").value.trim();
+
+      const id = `${serviceId}-${date}`;
+
+      const breach = {
+        id,
+        service: serviceId,
+        serviceName,
+        date,
+        dataLeaked,
+        risk,
+        confirmed,
+        action,
+        source,
+      };
+      if (sourceUrl) breach.sourceUrl = sourceUrl;
+      return breach;
+    }
+
+    // ─── JSON preview ──────────────────────────────────────────────
+    function updatePreview() {
+      const b = buildBreach();
+      document.getElementById("preview").textContent = JSON.stringify(b, null, 2);
+    }
+    function togglePreview() {
+      const pre = document.getElementById("preview");
+      const btn = document.querySelector(".preview-toggle");
+      updatePreview();
+      pre.classList.toggle("open");
+      btn.classList.toggle("open");
+    }
+
+    // ─── Draft save / restore (localStorage) ───────────────────────
+    const DRAFT_KEY = "ldw_admin_draft";
+    function saveDraft() {
+      const b = buildBreach();
+      try { localStorage.setItem(DRAFT_KEY, JSON.stringify(b)); } catch(e) {}
+    }
+    function restoreDraft() {
+      try {
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if (!raw) return;
+        const d = JSON.parse(raw);
+        if (d.service) document.getElementById("service").value = d.service;
+        if (d.date) document.getElementById("date").value = d.date;
+        if (Array.isArray(d.dataLeaked)) {
+          for (const opt of d.dataLeaked) {
+            const el = document.querySelector(`#dataChecks input[value="${opt.replace(/"/g, '\\"')}"]`);
+            if (el) el.checked = true;
+          }
+          const extras = d.dataLeaked.filter((x) => !DATA_OPTIONS.includes(x));
+          if (extras.length) document.getElementById("dataOther").value = extras.join(", ");
+        }
+        if (d.risk) {
+          const r = document.querySelector(`input[name="risk"][value="${d.risk}"]`);
+          if (r) r.checked = true;
+        }
+        if (typeof d.confirmed === "boolean") document.getElementById("confirmed").checked = d.confirmed;
+        if (d.action) document.getElementById("action").value = d.action;
+        if (d.source) document.getElementById("source").value = d.source;
+        if (d.sourceUrl) document.getElementById("sourceUrl").value = d.sourceUrl;
+      } catch(e) {}
+    }
+    function clearDraft() {
+      if (!confirm("Weet je zeker dat je alles wilt wissen?")) return;
+      localStorage.removeItem(DRAFT_KEY);
+      document.getElementById("form").reset();
+      document.getElementById("date").valueAsDate = new Date();
+      document.getElementById("status").classList.remove("show");
+    }
+    document.getElementById("form").addEventListener("input", saveDraft);
+    restoreDraft();
+
+    // ─── Submit ────────────────────────────────────────────────────
+    async function submit() {
+      const password = document.getElementById("password").value;
+      if (!password) {
+        alert("Vul je admin wachtwoord in");
+        return;
+      }
+      const breach = buildBreach();
+
+      // Validate
+      if (!breach.service) return alert("Kies een dienst");
+      if (!breach.date) return alert("Kies een datum");
+      if (breach.dataLeaked.length === 0) return alert("Selecteer minstens één data-type dat gelekt is");
+      if (!breach.action) return alert("Vul actie-advies in");
+      if (!breach.source) return alert("Kies een bron");
+
+      const btn = document.getElementById("submitBtn");
+      const status = document.getElementById("status");
+      btn.disabled = true;
+      btn.textContent = "Bezig…";
+      status.classList.remove("show", "success", "error");
+
+      try {
+        const res = await fetch("/api/admin/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Admin-Password": password,
+          },
+          body: JSON.stringify(breach),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          status.className = "status show error";
+          status.innerHTML = `<strong>Fout:</strong> ${escapeHtml(data.error || "Onbekende fout")}`;
+          return;
+        }
+
+        status.className = "status show success";
+        status.innerHTML = `
+          <strong>✓ Pull Request aangemaakt!</strong><br>
+          Open hem op GitHub en klik <em>Merge</em> om live te zetten.<br>
+          <a href="${data.prUrl}" target="_blank" rel="noopener">Open Pull Request #${data.prNumber} →</a>
+        `;
+        // Clear draft on success
+        localStorage.removeItem(DRAFT_KEY);
+        document.getElementById("form").reset();
+        document.getElementById("date").valueAsDate = new Date();
+      } catch (err) {
+        status.className = "status show error";
+        status.innerHTML = `<strong>Netwerkfout:</strong> ${escapeHtml(err.message)}`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Maak Pull Request op GitHub →";
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[c]);
+    }
+  </script>
+</body>
+</html>
