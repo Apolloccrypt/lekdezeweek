@@ -1,9 +1,15 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/*.js": {
-      "maxDuration": 10
+    "api/**/*.js": {
+      "maxDuration": 60
     }
   },
+  "crons": [
+    {
+      "path": "/api/cron/weekly-digest",
+      "schedule": "0 7 * * 4"
+    }
+  ],
   "cleanUrls": true
 }
