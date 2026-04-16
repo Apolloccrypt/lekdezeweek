@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LekDezeWeek.nl — Wekelijks heads-up of jouw data is gelekt</title>
+  <meta name="description" content="Elke donderdag: is jouw data deze week gelekt? Nederlandse datalek-radar. Privacy by design. Initiatief van Check Don't Store." />
+  <meta property="og:title" content="LekDezeWeek.nl" />
+  <meta property="og:description" content="Wekelijks heads-up: is jouw data deze week gelekt?" />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --bg-alt: #ece7dc;
+      --ink: #1a1814;
+      --ink-soft: #4a453c;
+      --muted: #8b8578;
+      --line: #d9d3c4;
+      --alert: #c8321e;
+      --alert-soft: #f3d9d3;
+      --ok: #2d6a4f;
+      --accent: #1a1814;
+      --radius: 2px;
+      --maxw: 1180px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    ::selection { background: var(--ink); color: var(--bg); }
+
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+
+    /* ---------- Header ---------- */
+    header {
+      border-bottom: 1px solid var(--line);
+      background: var(--bg);
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(6px);
+      background: rgba(244, 241, 234, 0.88);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+    .logo {
+      font-family: "Fraunces", Georgia, serif;
+      font-weight: 600;
+      font-size: 22px;
+      letter-spacing: -0.01em;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .logo-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--alert);
+      display: inline-block;
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(0.82); }
+    }
+    .nav-links { display: flex; gap: 24px; align-items: center; font-size: 14px; }
+    .nav-links a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 2px; transition: border-color .2s; }
+    .nav-links a:hover { border-color: var(--ink); color: var(--ink); }
+
+    /* ---------- Hero ---------- */
+    .hero { padding: 100px 0 80px; position: relative; }
+    .eyebrow {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ink-soft);
+      margin-bottom: 28px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .eyebrow::before {
+      content: ""; width: 32px; height: 1px; background: var(--ink-soft);
+    }
+
+    h1.display {
+      font-family: "Fraunces", Georgia, serif;
+      font-weight: 500;
+      font-size: clamp(46px, 7.5vw, 104px);
+      line-height: 0.96;
+      letter-spacing: -0.035em;
+      max-width: 14ch;
+      margin-bottom: 36px;
+    }
+    h1.display em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--alert);
+    }
+    h1.display .underline {
+      position: relative;
+      white-space: nowrap;
+    }
+    h1.display .underline::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: 0.06em;
+      height: 0.09em; background: var(--alert); opacity: 0.28;
+    }
+
+    .lede {
+      font-size: 20px;
+      line-height: 1.5;
+      color: var(--ink-soft);
+      max-width: 56ch;
+      margin-bottom: 44px;
+    }
+    .lede strong { color: var(--ink); font-weight: 600; }
+
+    .signup {
+      display: flex; gap: 10px; max-width: 520px; margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .signup input {
+      flex: 1; min-width: 240px;
+      padding: 18px 20px;
+      border: 1px solid var(--ink);
+      background: var(--bg);
+      font-family: inherit; font-size: 16px;
+      border-radius: var(--radius);
+      color: var(--ink);
+      outline: none;
+      transition: background .15s;
+    }
+    .signup input:focus { background: #fff; }
+    .btn {
+      padding: 18px 28px;
+      border: 1px solid var(--ink);
+      background: var(--ink); color: var(--bg);
+      font-family: inherit; font-size: 15px; font-weight: 600;
+      letter-spacing: -0.005em;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform .12s ease, background .15s;
+    }
+    .btn:hover { background: var(--alert); border-color: var(--alert); }
+    .btn:active { transform: translateY(1px); }
+    .btn-ghost { background: var(--bg); color: var(--ink); }
+    .btn-ghost:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+    .privacy-note {
+      font-size: 13px; color: var(--muted);
+      font-family: "JetBrains Mono", monospace;
+    }
+    .privacy-note::before { content: "→ "; color: var(--alert); }
+
+    /* ---------- Preview card ---------- */
+    .preview {
+      margin-top: 80px;
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 40px;
+      border-radius: var(--radius);
+      position: relative;
+      box-shadow: 0 24px 60px -20px rgba(26, 24, 20, 0.12);
+    }
+    .preview::before {
+      content: "VOORBEELD E-MAIL";
+      position: absolute; top: -10px; left: 24px;
+      background: var(--bg); padding: 2px 10px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px; letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+    .preview-head {
+      display: flex; justify-content: space-between;
+      padding-bottom: 20px; border-bottom: 1px solid var(--line);
+      margin-bottom: 24px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px; color: var(--ink-soft);
+    }
+    .preview h3 {
+      font-family: "Fraunces", serif;
+      font-weight: 500;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+      line-height: 1.15;
+    }
+    .breach-item {
+      display: grid;
+      grid-template-columns: 64px 1fr auto;
+      gap: 18px;
+      padding: 20px 0;
+      border-top: 1px solid var(--line);
+      align-items: start;
+    }
+    .breach-item:first-of-type { border-top: 1px solid var(--ink); }
+    .breach-date {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      color: var(--muted);
+      padding-top: 3px;
+    }
+    .breach-body strong { display: block; font-size: 17px; margin-bottom: 4px; }
+    .breach-body span { font-size: 14px; color: var(--ink-soft); display: block; }
+    .breach-body .action { margin-top: 8px; font-size: 13px; color: var(--alert); font-weight: 500; }
+    .tag {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px; padding: 4px 8px; letter-spacing: 0.08em;
+      border: 1px solid; white-space: nowrap;
+    }
+    .tag-high { color: var(--alert); border-color: var(--alert); }
+    .tag-mid { color: #b07a00; border-color: #b07a00; }
+    .tag-ok { color: var(--ok); border-color: var(--ok); }
+
+    /* ---------- Sections ---------- */
+    section { padding: 100px 0; border-top: 1px solid var(--line); }
+    .section-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em;
+      color: var(--muted); margin-bottom: 18px;
+    }
+    .section-title {
+      font-family: "Fraunces", serif;
+      font-weight: 500;
+      font-size: clamp(32px, 4.5vw, 54px);
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      max-width: 18ch;
+      margin-bottom: 56px;
+    }
+    .section-title em { font-style: italic; color: var(--alert); font-weight: 400; }
+
+    /* ---------- How it works ---------- */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--ink); }
+    .step { padding: 40px 32px; border-right: 1px solid var(--ink); position: relative; background: var(--bg); }
+    .step:last-child { border-right: none; }
+    .step-num {
+      font-family: "Fraunces", serif;
+      font-size: 64px; font-weight: 400;
+      line-height: 1; color: var(--alert);
+      margin-bottom: 24px; font-style: italic;
+    }
+    .step h4 {
+      font-family: "Fraunces", serif; font-weight: 600; font-size: 22px;
+      letter-spacing: -0.01em; margin-bottom: 12px;
+    }
+    .step p { font-size: 15px; color: var(--ink-soft); line-height: 1.5; }
+
+    /* ---------- Vinklijst ---------- */
+    .picker-intro { max-width: 52ch; font-size: 17px; color: var(--ink-soft); margin-bottom: 40px; }
+    .picker-intro strong { color: var(--ink); font-weight: 600; }
+
+    .picker {
+      background: #fff;
+      border: 1px solid var(--ink);
+      padding: 48px;
+      border-radius: var(--radius);
+    }
+    .picker-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding-bottom: 20px; margin-bottom: 32px;
+      border-bottom: 1px solid var(--ink);
+      flex-wrap: wrap; gap: 12px;
+    }
+    .picker-head h3 {
+      font-family: "Fraunces", serif; font-weight: 500; font-size: 24px;
+      letter-spacing: -0.015em;
+    }
+    .counter {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px; color: var(--ink-soft);
+    }
+    .counter span { color: var(--alert); font-weight: 600; }
+
+    .cat { margin-bottom: 32px; }
+    .cat-name {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--muted); margin-bottom: 14px;
+      padding-bottom: 8px; border-bottom: 1px dashed var(--line);
+    }
+    .services {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 2px;
+    }
+    .service {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background .12s, border-color .12s;
+      user-select: none;
+    }
+    .service:hover { background: var(--bg-alt); }
+    .service input { position: absolute; opacity: 0; pointer-events: none; }
+    .checkbox {
+      width: 18px; height: 18px; flex-shrink: 0;
+      border: 1.5px solid var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .12s;
+    }
+    .service input:checked + .checkbox {
+      background: var(--ink);
+    }
+    .service input:checked + .checkbox::after {
+      content: "✓"; color: var(--bg); font-size: 12px; font-weight: 700;
+    }
+    .service input:checked ~ .service-name {
+      font-weight: 600;
+    }
+    .service-name { font-size: 14px; }
+
+    .picker-actions {
+      margin-top: 36px; padding-top: 28px; border-top: 1px solid var(--line);
+      display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+    }
+    .picker-email {
+      flex: 1; min-width: 220px;
+      padding: 16px 18px;
+      border: 1px solid var(--ink);
+      background: var(--bg);
+      font-family: inherit; font-size: 15px;
+      border-radius: var(--radius);
+      outline: none;
+    }
+    .picker-email:focus { background: #fff; }
+
+    .success-state {
+      background: var(--bg-alt);
+      border: 1px solid var(--ok);
+      padding: 32px;
+      margin-top: 24px;
+      display: none;
+      border-radius: var(--radius);
+    }
+    .success-state.show { display: block; animation: fadein .4s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .success-state h4 {
+      font-family: "Fraunces", serif; font-size: 22px; font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .success-state p { font-size: 15px; color: var(--ink-soft); }
+
+    /* ---------- Why block ---------- */
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .why-text p { font-size: 18px; line-height: 1.65; color: var(--ink-soft); margin-bottom: 20px; max-width: 48ch; }
+    .why-text p strong { color: var(--ink); font-weight: 600; }
+    .why-text p em { font-style: italic; color: var(--alert); font-weight: 500; }
+    .comparison {
+      background: var(--bg-alt);
+      padding: 36px;
+      border-left: 3px solid var(--alert);
+    }
+    .comparison h4 {
+      font-family: "Fraunces", serif; font-size: 20px; font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .compare-row { display: grid; grid-template-columns: 1fr auto auto; gap: 16px; padding: 12px 0; border-top: 1px solid var(--line); font-size: 14px; align-items: center; }
+    .compare-row:first-of-type { border-top: 1px solid var(--ink); font-family: "JetBrains Mono", monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding-bottom: 8px; padding-top: 0; }
+    .check { color: var(--ok); font-weight: 700; font-size: 16px; }
+    .cross { color: var(--alert); font-weight: 700; font-size: 16px; }
+
+    /* ---------- Footer CTA ---------- */
+    .final-cta {
+      background: var(--ink); color: var(--bg);
+      padding: 120px 0;
+      text-align: center;
+    }
+    .final-cta h2 {
+      font-family: "Fraunces", serif;
+      font-weight: 500;
+      font-size: clamp(36px, 6vw, 72px);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 28px;
+      max-width: 16ch;
+      margin-inline: auto;
+    }
+    .final-cta h2 em { font-style: italic; color: #ff8973; }
+    .final-cta p {
+      max-width: 44ch; margin: 0 auto 44px; opacity: 0.75; font-size: 17px;
+    }
+    .final-cta .btn {
+      background: var(--bg); color: var(--ink); border-color: var(--bg);
+      padding: 22px 36px; font-size: 16px;
+    }
+    .final-cta .btn:hover { background: var(--alert); color: var(--bg); border-color: var(--alert); }
+
+    /* ---------- Footer ---------- */
+    footer {
+      padding: 48px 0 40px;
+      font-size: 13px; color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+    .footer-grid { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    footer a { color: var(--ink-soft); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+    footer a:hover { text-decoration-color: var(--alert); }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 820px) {
+      .hero { padding: 60px 0 40px; }
+      section { padding: 64px 0; }
+      .steps { grid-template-columns: 1fr; }
+      .step { border-right: none; border-bottom: 1px solid var(--ink); }
+      .step:last-child { border-bottom: none; }
+      .why-grid { grid-template-columns: 1fr; gap: 48px; }
+      .preview { padding: 24px; }
+      .picker { padding: 24px; }
+      .breach-item { grid-template-columns: 1fr; gap: 8px; }
+      .breach-date { order: -1; }
+      .final-cta { padding: 72px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap nav">
+      <div class="logo">
+        <span class="logo-dot"></span>
+        LekDezeWeek<span style="color:var(--muted)">.nl</span>
+      </div>
+      <div class="nav-links">
+        <a href="#hoe">Hoe het werkt</a>
+        <a href="#vinklijst">Aanmelden</a>
+        <a href="#waarom">Waarom</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Editie 3 · Check Don't Store</div>
+      <h1 class="display">
+        Is jouw data<br />
+        <em>deze week</em> <span class="underline">gestolen?</span>
+      </h1>
+      <p class="lede">
+        <strong>Have I Been Pwned</strong> is nog steeds goed — maar reactief, Engelstalig en te laat voor Nederland.
+        Wij checken elke donderdag de nieuwe lekken (Basic-Fit, Booking.com, ChipSoft…)
+        en sturen je één heldere e-mail: <strong>wat</strong>, <strong>wanneer</strong> en <strong>wat je nu moet doen</strong>.
+      </p>
+
+      <form class="signup" id="heroForm" onsubmit="scrollToPicker(event)">
+        <input type="email" placeholder="jouw@email.nl" required aria-label="E-mailadres" />
+        <button type="submit" class="btn">Kies je diensten →</button>
+      </form>
+      <p class="privacy-note">Zero knowledge. Alleen gehashte e-mail. Geen tracking.</p>
+
+      <!-- Mock digest preview -->
+      <div class="preview" aria-label="Voorbeeld van de wekelijkse e-mail">
+        <div class="preview-head">
+          <span>Donderdag 16 apr 2026 · week 16</span>
+          <span>→ voor jou persoonlijk</span>
+        </div>
+        <h3>Deze week: 3 nieuwe lekken. Je bent geraakt bij 1.</h3>
+
+        <div class="breach-item">
+          <div class="breach-date">13 APR</div>
+          <div class="breach-body">
+            <strong>Basic-Fit</strong>
+            <span>Gelekt: naam, adres, IBAN, geboortedatum, foto-ID</span>
+            <span class="action">→ Verander wachtwoord · Bel bank voor IBAN-alert · Claim via art. 82 AVG</span>
+          </div>
+          <div class="tag tag-high">HOOG RISICO</div>
+        </div>
+
+        <div class="breach-item">
+          <div class="breach-date">14 APR</div>
+          <div class="breach-body">
+            <strong>ChipSoft (onbevestigd)</strong>
+            <span>Mogelijk: medisch dossier, BSN-nummer (melding Z-CERT)</span>
+            <span class="action">→ We houden je op de hoogte · Zet alvast 2FA aan waar mogelijk</span>
+          </div>
+          <div class="tag tag-mid">ONBEVESTIGD</div>
+        </div>
+
+        <div class="breach-item">
+          <div class="breach-date">15 APR</div>
+          <div class="breach-body">
+            <strong>Booking.com</strong>
+            <span>Jij bent <em>niet</em> in deze dump aangetroffen.</span>
+          </div>
+          <div class="tag tag-ok">SAFE</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOE HET WERKT -->
+  <section id="hoe">
+    <div class="wrap">
+      <div class="section-label">Hoe het werkt</div>
+      <h2 class="section-title">Drie klikken. <em>Eén</em> e-mail per week.</h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h4>Vul je e-mail in</h4>
+          <p>Wij slaan alleen de hash op. Je adres zelf staat nooit in onze database.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h4>Vink je diensten</h4>
+          <p>40+ Nederlandse diensten — van Basic-Fit tot ING. Precies jouw digitale footprint.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h4>Donderdag = radar-dag</h4>
+          <p>Eén e-mail, drie regels per lek: wat, hoe erg, wat jij nu moet doen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VINKLIJST -->
+  <section id="vinklijst" style="background: var(--bg-alt);">
+    <div class="wrap">
+      <div class="section-label">Meld je aan</div>
+      <h2 class="section-title">Vink waar jij <em>klant</em> bent.</h2>
+      <p class="picker-intro">
+        Selecteer alleen diensten waar je nu écht een account hebt. Hoe preciezer jouw lijst,
+        hoe <strong>scherper de wekelijkse alert</strong>. Je kunt dit later altijd aanpassen.
+      </p>
+
+      <div class="picker">
+        <div class="picker-head">
+          <h3>Jouw digitale footprint</h3>
+          <div class="counter"><span id="count">0</span> / 40 geselecteerd</div>
+        </div>
+
+        <div id="serviceList"></div>
+
+        <div class="picker-actions">
+          <input type="email" class="picker-email" id="finalEmail" placeholder="jouw@email.nl" required aria-label="E-mailadres voor aanmelding" />
+          <button class="btn" onclick="submitSignup()">Start mijn wekelijkse radar →</button>
+        </div>
+
+        <div class="success-state" id="success">
+          <h4>✓ Ingeschreven. Je eerste alert komt donderdag.</h4>
+          <p id="successDetail">We versturen alleen op donderdag. Uitschrijven kan met één klik.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WAAROM -->
+  <section id="waarom">
+    <div class="wrap">
+      <div class="section-label">Waarom dit bestaat</div>
+      <h2 class="section-title">HIBP is <em>wereldwijd</em>.<br />Wij zijn <em>Nederlands</em>.</h2>
+
+      <div class="why-grid">
+        <div class="why-text">
+          <p>
+            In 2026 zijn de grootste lekken <strong>hier</strong>: Basic-Fit, ChipSoft, Booking.com.
+            Internationale tools pikken die pas weken later op — als ze het al doen.
+          </p>
+          <p>
+            Wij draaien wekelijkse crawls op <strong>Z-CERT-meldingen</strong>, Tweakers, NOS
+            en officiële persberichten. De HIBP API gebruiken we als extra check, niet als bron.
+          </p>
+          <p>
+            En we geven je <em>niet alleen ja/nee</em>. Elke alert vertelt wat precies is gelekt
+            en geeft een directe actieknop — inclusief schadeclaim via artikel 82 AVG.
+          </p>
+        </div>
+
+        <div class="comparison">
+          <h4>Wij vs. Have I Been Pwned</h4>
+          <div class="compare-row">
+            <span>Feature</span>
+            <span>LDW</span>
+            <span>HIBP</span>
+          </div>
+          <div class="compare-row">
+            <span>Wekelijkse push</span>
+            <span class="check">✓</span>
+            <span class="cross">✕</span>
+          </div>
+          <div class="compare-row">
+            <span>NL-bronnen (Z-CERT, nieuws)</span>
+            <span class="check">✓</span>
+            <span class="cross">✕</span>
+          </div>
+          <div class="compare-row">
+            <span>Welke data exact gelekt</span>
+            <span class="check">✓</span>
+            <span class="cross">deels</span>
+          </div>
+          <div class="compare-row">
+            <span>Actie-advies per lek</span>
+            <span class="check">✓</span>
+            <span class="cross">✕</span>
+          </div>
+          <div class="compare-row">
+            <span>AVG-schadeclaim template</span>
+            <span class="check">✓</span>
+            <span class="cross">✕</span>
+          </div>
+          <div class="compare-row">
+            <span>Wereldwijde database</span>
+            <span class="cross">deels</span>
+            <span class="check">✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <div class="final-cta">
+    <div class="wrap">
+      <h2>Minder opslaan.<br /><em>Beter beschermd.</em></h2>
+      <p>LekDezeWeek is onderdeel van de <strong style="color:#fff">Check Don't Store</strong> campagne.
+        We slaan zo min mogelijk op — ironisch genoeg precies het principe waarvoor we vechten.</p>
+      <a href="#vinklijst" class="btn">Start je radar — gratis →</a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="wrap footer-grid">
+      <div>
+        <div class="logo" style="font-size:16px; margin-bottom:8px">
+          <span class="logo-dot"></span>LekDezeWeek.nl
+        </div>
+        <p>Initiatief van <a href="#">Check Don't Store</a> · Privacy by design</p>
+      </div>
+      <div style="text-align:right">
+        <p>Bronnen: HIBP · Z-CERT · Tweakers · NOS · AP</p>
+        <p style="margin-top:6px">© 2026 · <a href="#">Privacy</a> · <a href="#">Uitschrijven</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ---------- DATA: 40 Dutch services ----------
+    const SERVICES = [
+      { id:"basicfit", naam:"Basic-Fit", categorie:"Fitness" },
+      { id:"fit20", naam:"Fit20", categorie:"Fitness" },
+      { id:"booking", naam:"Booking.com", categorie:"Reizen" },
+      { id:"airbnb", naam:"Airbnb", categorie:"Reizen" },
+      { id:"klm", naam:"KLM / Air France", categorie:"Reizen" },
+      { id:"tui", naam:"TUI", categorie:"Reizen" },
+      { id:"ns", naam:"NS (trein)", categorie:"Reizen" },
+      { id:"uber", naam:"Uber", categorie:"Reizen" },
+      { id:"chipsoft", naam:"ChipSoft (ziekenhuis/huisarts)", categorie:"Zorg" },
+      { id:"epd", naam:"Ander EPD (Epic/Cerner)", categorie:"Zorg" },
+      { id:"ing", naam:"ING Bank", categorie:"Bank" },
+      { id:"rabobank", naam:"Rabobank", categorie:"Bank" },
+      { id:"abnamro", naam:"ABN AMRO", categorie:"Bank" },
+      { id:"sns", naam:"SNS Bank", categorie:"Bank" },
+      { id:"bunq", naam:"bunq", categorie:"Bank" },
+      { id:"bol", naam:"Bol.com", categorie:"Webshop" },
+      { id:"coolblue", naam:"Coolblue", categorie:"Webshop" },
+      { id:"zalando", naam:"Zalando", categorie:"Webshop" },
+      { id:"amazon", naam:"Amazon", categorie:"Webshop" },
+      { id:"ah", naam:"Albert Heijn / Mijn AH", categorie:"Webshop" },
+      { id:"jumbo", naam:"Jumbo", categorie:"Webshop" },
+      { id:"netflix", naam:"Netflix", categorie:"Streaming" },
+      { id:"spotify", naam:"Spotify", categorie:"Streaming" },
+      { id:"disney", naam:"Disney+", categorie:"Streaming" },
+      { id:"pathe", naam:"Pathé", categorie:"Streaming" },
+      { id:"kpn", naam:"KPN", categorie:"Telecom" },
+      { id:"vodafone", naam:"Vodafone", categorie:"Telecom" },
+      { id:"tmobile", naam:"T-Mobile", categorie:"Telecom" },
+      { id:"ziggo", naam:"Ziggo", categorie:"Telecom" },
+      { id:"eneco", naam:"Eneco", categorie:"Energie" },
+      { id:"essent", naam:"Essent", categorie:"Energie" },
+      { id:"deliveroo", naam:"Deliveroo", categorie:"Maaltijd" },
+      { id:"thuisbezorgd", naam:"Thuisbezorgd.nl", categorie:"Maaltijd" },
+      { id:"linkedin", naam:"LinkedIn", categorie:"Social" },
+      { id:"facebook", naam:"Facebook / Meta", categorie:"Social" },
+      { id:"instagram", naam:"Instagram", categorie:"Social" },
+      { id:"apple", naam:"Apple ID / iCloud", categorie:"Tech" },
+      { id:"google", naam:"Google Account", categorie:"Tech" },
+      { id:"microsoft", naam:"Microsoft Account", categorie:"Tech" },
+      { id:"ikea", naam:"IKEA", categorie:"Wonen" }
+    ];
+
+    // ---------- Render grouped checklist ----------
+    const list = document.getElementById("serviceList");
+    const grouped = SERVICES.reduce((acc, s) => {
+      (acc[s.categorie] = acc[s.categorie] || []).push(s);
+      return acc;
+    }, {});
+    const CAT_ORDER = ["Fitness","Reizen","Zorg","Bank","Webshop","Streaming","Telecom","Energie","Maaltijd","Social","Tech","Wonen"];
+
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem("ldw_selection") || "{}"); } catch(e){}
+
+    CAT_ORDER.forEach(cat => {
+      if (!grouped[cat]) return;
+      const wrap = document.createElement("div");
+      wrap.className = "cat";
+      wrap.innerHTML = `<div class="cat-name">${cat}</div><div class="services"></div>`;
+      const services = wrap.querySelector(".services");
+      grouped[cat].forEach(s => {
+        const label = document.createElement("label");
+        label.className = "service";
+        label.innerHTML = `
+          <input type="checkbox" data-id="${s.id}" ${saved[s.id] ? "checked" : ""} />
+          <span class="checkbox"></span>
+          <span class="service-name">${s.naam}</span>
+        `;
+        services.appendChild(label);
+      });
+      list.appendChild(wrap);
+    });
+
+    // Persist selections + update counter
+    const counter = document.getElementById("count");
+    function update() {
+      const checks = document.querySelectorAll('#serviceList input[type="checkbox"]');
+      const sel = {};
+      let n = 0;
+      checks.forEach(c => { if (c.checked) { sel[c.dataset.id] = true; n++; } });
+      localStorage.setItem("ldw_selection", JSON.stringify(sel));
+      counter.textContent = n;
+    }
+    document.getElementById("serviceList").addEventListener("change", update);
+    update();
+
+    // Hero email hand-off to main form
+    function scrollToPicker(ev) {
+      ev.preventDefault();
+      const email = ev.target.querySelector("input").value;
+      document.getElementById("finalEmail").value = email;
+      document.getElementById("vinklijst").scrollIntoView({ behavior:"smooth" });
+    }
+
+    // Submit
+    async function submitSignup() {
+      const email = document.getElementById("finalEmail").value.trim();
+      const checks = document.querySelectorAll('#serviceList input:checked');
+      if (!email || !/.+@.+\..+/.test(email)) {
+        document.getElementById("finalEmail").focus();
+        document.getElementById("finalEmail").style.borderColor = "var(--alert)";
+        return;
+      }
+      if (checks.length === 0) {
+        alert("Vink minstens één dienst aan — anders kunnen we niet personaliseren.");
+        return;
+      }
+
+      const selected = Array.from(checks).map(c => c.dataset.id);
+
+      // ─────────────────────────────────────────────────────────
+      // TODO (backend): POST { email, selected } naar /api/signup
+      // Voor MVP op Vercel: koppel Formspree, Resend of eigen API.
+      // Voorbeeld:
+      // await fetch("/api/signup", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ email, selected })
+      // });
+      // ─────────────────────────────────────────────────────────
+
+      document.getElementById("successDetail").textContent =
+        `We monitoren ${selected.length} diensten voor ${email}. Eerste alert: donderdag.`;
+      document.getElementById("success").classList.add("show");
+      document.getElementById("success").scrollIntoView({ behavior:"smooth", block:"center" });
+    }
+  </script>
+
+</body>
+</html>
